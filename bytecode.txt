@@ -1,0 +1,12 @@
+function cellCode params endparams
+float x
+float y
+= x 5
+= y 6
+- x x y
+string s
+= s "distance"
+callfunction print void args s x endargs
+vector3 v
+return v endreturn
+endfunction
