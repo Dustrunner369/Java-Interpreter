@@ -1,6 +1,5 @@
 import java.io.*;
 import java.util.*;
-import sun.awt.www.content.audio.wav;
 
 public class Interpreter {
 
@@ -17,6 +16,7 @@ public class Interpreter {
         HashMap<String, Register> variables = new HashMap<>();
         ArrayList<Command> commands = new ArrayList<>();
         ArrayList<String> tokens = new ArrayList<>();
+
         // Read in file and print it out
         File bytecodeFile = new File(args[0]);
         try (Scanner myReader = new Scanner(bytecodeFile)) {
