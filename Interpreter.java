@@ -12,6 +12,7 @@ public class Interpreter {
         // For dev:
         args[0] = "bytecode.txt";
 
+        // Read in file and print it out
         File bytecodeFile = new File(args[0]);
         try (Scanner myReader = new Scanner(bytecodeFile)) {
             while (myReader.hasNextLine()) {
