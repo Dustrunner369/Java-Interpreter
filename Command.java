@@ -15,4 +15,8 @@ public class Command {
     public String[] getOperands() {
         return operands;
     }
+
+    public String toString() {
+        return operator + " " + String.join(" ", operands);
+    }
 }

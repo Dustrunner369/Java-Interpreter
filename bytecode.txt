@@ -8,5 +8,7 @@ string s
 = s "distance"
 callfunction print void args s x endargs
 vector3 v
+jump l1
+label l1
 return v endreturn
 endfunction
