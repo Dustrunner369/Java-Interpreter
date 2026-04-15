@@ -1,16 +1,28 @@
 public class Register {
 
-    private int value;
+    private String type;
+    private Object value;
 
-    public Register() {
-        this.value = 0;
+    public Register(String type) {
+        this.type = type;
+        if (type.equals("float") || type.equals("bool")) {
+            this.value = 0.0;
+        } else if (type.equals("string")) {
+            this.value = "UNDEFINED";
+        } else if (type.equals("vector3")) {
+            this.value = null;
+        }
     }
 
-    public int getValue() {
+    public String getType() {
+        return type;
+    }
+
+    public Object getValue() {
         return value;
     }
 
-    public void setValue(int value) {
+    public void setValue(Object value) {
         this.value = value;
     }
 }

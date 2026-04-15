@@ -22,7 +22,6 @@ public class Interpreter {
         try (Scanner myReader = new Scanner(bytecodeFile)) {
             while (myReader.hasNext()) {
                 String data = myReader.next();
-                //System.out.println(data);
                 tokens.add(data);
             }
         } catch (FileNotFoundException e) {
@@ -30,6 +29,102 @@ public class Interpreter {
             e.printStackTrace();
         }
         commands = parseCommands(tokens);
+
+        // Execute commands
+        int pc = 0;
+
+        while (pc < commands.size()) {
+            Command cmd = commands.get(pc);
+            System.out.println("Begin command loop.");
+            switch (cmd.getOperator()) {
+                case "function":
+                    // System.out.println(cmd.toString());
+
+                    break;
+                case "endfunction":
+                    // System.out.println(cmd.toString());
+                    break;
+                case "callfunction":
+                    break;
+                case "return":
+                    break;
+                case "jump":
+                    break;
+                case "jumpif":
+                    break;
+                case "label":
+                    break;
+                case "float":
+                    variables.put(cmd.getOperands()[0], new Register("float"));
+
+                    break;
+                case "vector3":
+                    //
+                    variables.put(
+                        cmd.getOperands()[0],
+                        new Register("vector3")
+                    );
+                    variables.put(
+                        cmd.getOperands()[0] + ".r",
+                        new Register("float")
+                    );
+                    variables.put(
+                        cmd.getOperands()[0] + ".g",
+                        new Register("float")
+                    );
+                    variables.put(
+                        cmd.getOperands()[0] + ".b",
+                        new Register("float")
+                    );
+
+                    break;
+                case "bool":
+                    variables.put(cmd.getOperands()[0], new Register("bool"));
+
+                    break;
+                case "string":
+                    variables.put(cmd.getOperands()[0], new Register("string"));
+
+                    break;
+                case "=":
+                    variables
+                        .get(cmd.getOperands()[0])
+                        .setValue(cmd.getOperands()[1]);
+                    break;
+                case "==":
+                    break;
+                case "!=":
+                    break;
+                case "<=":
+                    break;
+                case ">=":
+                    break;
+                case "<":
+                    break;
+                case ">":
+                    break;
+                case "+":
+                    break;
+                case "-":
+                    break;
+                case "*":
+                    break;
+                case "/":
+                    break;
+                case "%":
+                    break;
+                case "&":
+                    break;
+                case "|":
+                    break;
+                case "!":
+                    break;
+                default:
+                    System.out.println("Unknown command: " + cmd.getOperator());
+                    break;
+            }
+            pc++;
+        }
     }
 
     public static ArrayList<Command> parseCommands(ArrayList<String> tokens) {
@@ -320,9 +415,10 @@ public class Interpreter {
             }
         }
 
-        for (Command c : listToReturn) {
-            System.out.println(c.toString());
-        }
+        // Debug
+        //for (Command c : listToReturn) {
+        //    System.out.println(c.toString());
+        //}
 
         return listToReturn;
     }
