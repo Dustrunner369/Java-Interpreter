@@ -35,7 +35,7 @@ public class Interpreter {
 
         while (pc < commands.size()) {
             Command cmd = commands.get(pc);
-            System.out.println("Begin command loop.");
+            // System.out.println("Begin command loop.");
             switch (cmd.getOperator()) {
                 case "function":
                     // System.out.println(cmd.toString());
@@ -92,6 +92,27 @@ public class Interpreter {
                         .setValue(cmd.getOperands()[1]);
                     break;
                 case "==":
+                    // System.out.println(
+                    //     cmd.getOperands()[0] +
+                    //         " " +
+                    //         cmd.getOperands()[1] +
+                    //         " " +
+                    //         cmd.getOperands()[2]
+                    // );
+                    // First, check if a register exists for the operands
+
+                    String firstOperandType = variables
+                        .get(cmd.getOperands()[1])
+                        .getType();
+
+                    boolean resultToStore =
+                        variables.get(cmd.getOperands()[1]) ==
+                        variables.get(cmd.getOperands()[2]);
+
+                    System.out.println(
+                        variables.get(cmd.getOperands()[2]).getValue()
+                    );
+                    //System.out.println(resultToStore);
                     break;
                 case "!=":
                     break;
@@ -232,6 +253,7 @@ public class Interpreter {
                 i += 3;
             } else if (current.equals("==")) {
                 // == <reg> <reg or const> <reg or const>
+                System.out.println("LOOK HERE!!" + tokens.get(i + 1));
                 listToReturn.add(
                     new Command(
                         "==",
@@ -421,5 +443,16 @@ public class Interpreter {
         //}
 
         return listToReturn;
+    }
+
+    public static double resolveFloat(
+        String operand,
+        HashMap<String, Register> registers
+    ) {
+        if (registers.containsKey(operand)) {
+            return (double) registers.get(operand).getValue();
+        } else {
+            return Double.parseDouble(operand);
+        }
     }
 }
