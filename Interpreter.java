@@ -91,38 +91,162 @@ public class Interpreter {
                         .get(cmd.getOperands()[0])
                         .setValue(cmd.getOperands()[1]);
                     break;
-                case "==":
-                    // System.out.println(
-                    //     cmd.getOperands()[0] +
-                    //         " " +
-                    //         cmd.getOperands()[1] +
-                    //         " " +
-                    //         cmd.getOperands()[2]
-                    // );
-                    // First, check if a register exists for the operands
+                case "==": {
+                    // Store the left and right operands
+                    String left = cmd.getOperands()[1];
+                    String right = cmd.getOperands()[2];
+                    boolean result;
 
-                    String firstOperandType = variables
-                        .get(cmd.getOperands()[1])
-                        .getType();
-
-                    boolean resultToStore =
-                        variables.get(cmd.getOperands()[1]) ==
-                        variables.get(cmd.getOperands()[2]);
-
-                    System.out.println(
-                        variables.get(cmd.getOperands()[2]).getValue()
-                    );
-                    //System.out.println(resultToStore);
+                    // Determine type by checking if operands are vector3 registers
+                    if (
+                        variables.containsKey(left) &&
+                        variables.get(left).getType().equals("vector3")
+                    ) {
+                        // vector3 check. Compares rgb
+                        double lr = (double) variables
+                            .get(left + ".r")
+                            .getValue();
+                        double lg = (double) variables
+                            .get(left + ".g")
+                            .getValue();
+                        double lb = (double) variables
+                            .get(left + ".b")
+                            .getValue();
+                        double rr = (double) variables
+                            .get(right + ".r")
+                            .getValue();
+                        double rg = (double) variables
+                            .get(right + ".g")
+                            .getValue();
+                        double rb = (double) variables
+                            .get(right + ".b")
+                            .getValue();
+                        result = (lr == rr && lg == rg && lb == rb);
+                    } else {
+                        // Normal bool and float comparison
+                        double l = resolveFloat(left, variables);
+                        double r = resolveFloat(right, variables);
+                        result = (l == r);
+                    }
+                    variables
+                        .get(cmd.getOperands()[0])
+                        .setValue(result ? 1.0 : 0.0);
                     break;
+                }
                 case "!=":
+                    // Store the left and right operands
+                    String left = cmd.getOperands()[1];
+                    String right = cmd.getOperands()[2];
+                    boolean result;
+
+                    // Determine type by checking if operands are vector3 registers
+                    if (
+                        variables.containsKey(left) &&
+                        variables.get(left).getType().equals("vector3")
+                    ) {
+                        // vector3 check. Compares rgb
+                        double lr = (double) variables
+                            .get(left + ".r")
+                            .getValue();
+                        double lg = (double) variables
+                            .get(left + ".g")
+                            .getValue();
+                        double lb = (double) variables
+                            .get(left + ".b")
+                            .getValue();
+                        double rr = (double) variables
+                            .get(right + ".r")
+                            .getValue();
+                        double rg = (double) variables
+                            .get(right + ".g")
+                            .getValue();
+                        double rb = (double) variables
+                            .get(right + ".b")
+                            .getValue();
+                        result = (lr == rr && lg == rg && lb == rb);
+                    } else {
+                        // Normal bool and float comparison
+                        double l = resolveFloat(left, variables);
+                        double r = resolveFloat(right, variables);
+                        result = (l == r);
+                    }
+                    variables
+                        .get(cmd.getOperands()[0])
+                        .setValue(result ? 0.0 : 1.0); // Same logic as ==, just flip the 0.0 and 1.0.
                     break;
                 case "<=":
+                    // Store the left and right operands
+                    double lteLeftOperand = resolveFloat(
+                        cmd.getOperands()[1],
+                        variables
+                    );
+                    double lteRightOperand = resolveFloat(
+                        cmd.getOperands()[2],
+                        variables
+                    );
+                    boolean lessThanOrEqualsToo;
+
+                    lessThanOrEqualsToo = (lteLeftOperand <= lteRightOperand);
+
+                    variables
+                        .get(cmd.getOperands()[0])
+                        .setValue(lessThanOrEqualsToo ? 1.0 : 0.0);
+
                     break;
                 case ">=":
+                    // Store the left and right operands
+                    double gteLeftOperand = resolveFloat(
+                        cmd.getOperands()[1],
+                        variables
+                    );
+                    double gteRightOperand = resolveFloat(
+                        cmd.getOperands()[2],
+                        variables
+                    );
+                    boolean greaterThanOrEqualsToo;
+
+                    greaterThanOrEqualsToo = (gteLeftOperand >=
+                        gteRightOperand);
+
+                    variables
+                        .get(cmd.getOperands()[0])
+                        .setValue(greaterThanOrEqualsToo ? 1.0 : 0.0);
                     break;
                 case "<":
+                    // Store the left and right operands
+                    double ltLeftOperand = resolveFloat(
+                        cmd.getOperands()[1],
+                        variables
+                    );
+                    double ltRightOperand = resolveFloat(
+                        cmd.getOperands()[2],
+                        variables
+                    );
+                    boolean lessThan;
+
+                    lessThan = (ltLeftOperand >= ltRightOperand);
+
+                    variables
+                        .get(cmd.getOperands()[0])
+                        .setValue(lessThan ? 1.0 : 0.0);
                     break;
                 case ">":
+                    // Store the left and right operands
+                    double gtLeftOperand = resolveFloat(
+                        cmd.getOperands()[1],
+                        variables
+                    );
+                    double gtRightOperand = resolveFloat(
+                        cmd.getOperands()[2],
+                        variables
+                    );
+                    boolean greaterThan;
+
+                    greaterThan = (gtLeftOperand >= gtRightOperand);
+
+                    variables
+                        .get(cmd.getOperands()[0])
+                        .setValue(greaterThan ? 1.0 : 0.0);
                     break;
                 case "+":
                     break;
