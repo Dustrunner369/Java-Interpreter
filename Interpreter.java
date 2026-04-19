@@ -249,6 +249,10 @@ public class Interpreter {
                         .setValue(greaterThan ? 1.0 : 0.0);
                     break;
                 case "+":
+                    // Sets the value in the hashmap
+                    variables
+                        .get(cmd.getOperands()[0])
+                        .setValue(greaterThan ? 1.0 : 0.0);
                     break;
                 case "-":
                     break;
