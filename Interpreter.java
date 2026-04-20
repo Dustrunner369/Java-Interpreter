@@ -9,11 +9,9 @@ public class Interpreter {
             return;
         }
 
-        // For dev:
-        args[0] = "bytecode.txt";
-
         // Initialize variables
         HashMap<String, Register> variables = new HashMap<>();
+        HashMap<String, Integer> labelMap = new HashMap<>();
         ArrayList<Command> commands = new ArrayList<>();
         ArrayList<String> tokens = new ArrayList<>();
 
@@ -30,36 +28,67 @@ public class Interpreter {
         }
         commands = parseCommands(tokens);
 
+        // Loop through command list and set the labels
+        for (int i = 0; i < commands.size(); i++) {
+            if (commands.get(i).getOperator().equals("label")) {
+                labelMap.put(commands.get(i).getOperands()[0], i);
+            }
+        }
+
         // Execute commands
         int pc = 0;
 
         while (pc < commands.size()) {
             Command cmd = commands.get(pc);
-            // System.out.println("Begin command loop.");
             switch (cmd.getOperator()) {
                 case "function":
-                    // System.out.println(cmd.toString());
-
+                    // Store any parameters in the variables hashmap
+                    if(cmd.getOperands().length > 2) {
+                        for(int i = 2; i < cmd.getOperands().length - 1; i+=2) {
+                            variables.put(cmd.getOperands()[i+1], new Register(cmd.getOperands()[i]));
+                        }
+                    }
                     break;
                 case "endfunction":
-                    // System.out.println(cmd.toString());
+                    // Doesn't do anything since this marks the end of the function.
                     break;
                 case "callfunction":
+                    // Check if it's a print function
+                    if (cmd.getOperands()[0].equals("print")) {
+                        String label = cmd.getOperands()[2];
+                        if (variables.containsKey(label)) {
+                            label = variables.get(label).getValue().toString();
+                        } else {
+                            // Strip quotes
+                            label = label.replace("\"", "");
+                        }
+                        // Resolve value
+                        double printVal = resolveFloat(cmd.getOperands()[3], variables);
+                        System.out.println(label + ": " + printVal);
+                    }
                     break;
                 case "return":
+                    // Set the program counter to the end to exit the loop
+                    pc = commands.size();
                     break;
                 case "jump":
-                    break;
+                    pc = labelMap.get(cmd.getOperands()[0]);
+                    continue; // Continue to skip the pc increment at the bottom of the loop
                 case "jumpif":
+                    double boolVal = resolveFloat(cmd.getOperands()[1], variables);
+                    if (boolVal != 0.0) {
+                        pc = labelMap.get(cmd.getOperands()[0]);
+                        continue; // Continue to skip the pc increment at the bottom of the loop
+                    }
                     break;
                 case "label":
+                    // Nothing to do here since we created all the labels already
                     break;
                 case "float":
                     variables.put(cmd.getOperands()[0], new Register("float"));
-
                     break;
                 case "vector3":
-                    //
+                    // Adds the main vector variable along with its children
                     variables.put(
                         cmd.getOperands()[0],
                         new Register("vector3")
@@ -76,20 +105,38 @@ public class Interpreter {
                         cmd.getOperands()[0] + ".b",
                         new Register("float")
                     );
-
                     break;
                 case "bool":
                     variables.put(cmd.getOperands()[0], new Register("bool"));
-
                     break;
                 case "string":
                     variables.put(cmd.getOperands()[0], new Register("string"));
-
                     break;
                 case "=":
-                    variables
-                        .get(cmd.getOperands()[0])
-                        .setValue(cmd.getOperands()[1]);
+                    Register destinationReg = variables.get(cmd.getOperands()[0]);
+                    String rhsValue = cmd.getOperands()[1];
+                    String destinationType = destinationReg.getType();
+
+                    // We need to check what types we are trying to assign
+                    if (destinationType.equals("float") || destinationType.equals("bool")) {
+                        destinationReg.setValue(resolveFloat(rhsValue, variables));
+                    } else if (destinationType.equals("string")) {
+                        // Could be a string register or just a plain string
+                        if (variables.containsKey(rhsValue)) {
+                            destinationReg.setValue(variables.get(rhsValue).getValue());
+                        } else {
+                            // Strip quotes
+                            destinationReg.setValue(rhsValue.replace("\"", ""));
+                        }
+                    } else if (destinationType.equals("vector3")) {
+                        // For vector3, copy over all the components
+                        double rVal = (double) variables.get(rhsValue + ".r").getValue();
+                        double gVal = (double) variables.get(rhsValue + ".g").getValue();
+                        double bVal = (double) variables.get(rhsValue + ".b").getValue();
+                        variables.get(cmd.getOperands()[0] + ".r").setValue(rVal);
+                        variables.get(cmd.getOperands()[0] + ".g").setValue(gVal);
+                        variables.get(cmd.getOperands()[0] + ".b").setValue(bVal);
+                    }
                     break;
                 case "==": {
                     // Store the left and right operands
@@ -97,11 +144,8 @@ public class Interpreter {
                     String right = cmd.getOperands()[2];
                     boolean result;
 
-                    // Determine type by checking if operands are vector3 registers
-                    if (
-                        variables.containsKey(left) &&
-                        variables.get(left).getType().equals("vector3")
-                    ) {
+                    // Check type by checking if operands are vector3 registers
+                    if (variables.containsKey(left) && variables.get(left).getType().equals("vector3")) {
                         // vector3 check. Compares rgb
                         double lr = (double) variables
                             .get(left + ".r")
@@ -191,7 +235,6 @@ public class Interpreter {
                     variables
                         .get(cmd.getOperands()[0])
                         .setValue(lessThanOrEqualsToo ? 1.0 : 0.0);
-
                     break;
                 case ">=":
                     // Store the left and right operands
@@ -468,7 +511,6 @@ public class Interpreter {
                 i += 3;
             } else if (current.equals("==")) {
                 // == <reg> <reg or const> <reg or const>
-                System.out.println("LOOK HERE!!" + tokens.get(i + 1));
                 listToReturn.add(
                     new Command(
                         "==",
@@ -651,21 +693,16 @@ public class Interpreter {
                 i++;
             }
         }
-
-        // Debug
-        //for (Command c : listToReturn) {
-        //    System.out.println(c.toString());
-        //}
-
         return listToReturn;
     }
 
+    // Parses a string into a float. If the value is stored in a register, we parse that too.
     public static double resolveFloat(
         String operand,
         HashMap<String, Register> registers
     ) {
         if (registers.containsKey(operand)) {
-            return (double) registers.get(operand).getValue();
+            return Double.valueOf(registers.get(operand).getValue().toString());
         } else {
             return Double.parseDouble(operand);
         }

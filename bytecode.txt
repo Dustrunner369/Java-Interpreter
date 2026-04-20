@@ -1,17 +1,38 @@
 function cellCode params endparams
-float x
-float y
-= x 5
-= y 6
-- x x y
-string s
-= s "distance"
-callfunction print void args s x endargs
 vector3 v
+float f
+= v.r 1
+= v.b 1
+= v.g 1
+string s1
+= s1 "jack"
+= v v
+= v.g v.b
+= f f
+callfunction print args "STRING" v.r endargs
+callfunction print args s1 5 endargs
+callfunction print args s1 f endargs
+return v endreturn
 jump l1
 label l1
+jumpif boolreg l1
 bool b
+string s
 == b v.r v.b
-== b 1 1
-return v endreturn
+== b v.r 1
+== b v.r f
+== b v v
+!= b v.b v.r
+& b b1 b2
+| b b1 b2
+! b b1
+> b f f
+>= b f f
+< b f f
+<= b f f
++ v.r 1 1
+- v.r 1 1
+/ v.r 1 1
+* v.r 1 1
+% v.r 1 1
 endfunction
