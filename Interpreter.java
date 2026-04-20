@@ -303,6 +303,17 @@ public class Interpreter {
                         .setValue(divLeft / divRight);
                     break;
                 case "%":
+                    double modLeft = resolveFloat(
+                        cmd.getOperands()[1],
+                        variables
+                    );
+                    double modRight = resolveFloat(
+                        cmd.getOperands()[2],
+                        variables
+                    );
+                    variables
+                        .get(cmd.getOperands()[0])
+                        .setValue(modLeft % modRight);
                     break;
                 case "&":
                     break;
