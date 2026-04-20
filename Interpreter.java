@@ -346,6 +346,14 @@ public class Interpreter {
                         );
                     break;
                 case "!":
+                    double notVal = resolveFloat(
+                        cmd.getOperands()[1],
+                        variables
+                    );
+
+                    variables
+                        .get(cmd.getOperands()[0])
+                        .setValue(notVal == 0.0 ? 1.0 : 0.0);
                     break;
                 default:
                     System.out.println("Unknown command: " + cmd.getOperator());
