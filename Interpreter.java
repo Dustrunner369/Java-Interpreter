@@ -316,8 +316,34 @@ public class Interpreter {
                         .setValue(modLeft % modRight);
                     break;
                 case "&":
+                    double andLeft = resolveFloat(
+                        cmd.getOperands()[1],
+                        variables
+                    );
+                    double andRight = resolveFloat(
+                        cmd.getOperands()[2],
+                        variables
+                    );
+                    variables
+                        .get(cmd.getOperands()[0])
+                        .setValue(
+                            (andLeft != 0.0 && andRight != 0.0) ? 1.0 : 0.0
+                        );
                     break;
                 case "|":
+                    double orLeft = resolveFloat(
+                        cmd.getOperands()[1],
+                        variables
+                    );
+                    double orRight = resolveFloat(
+                        cmd.getOperands()[2],
+                        variables
+                    );
+                    variables
+                        .get(cmd.getOperands()[0])
+                        .setValue(
+                            (orLeft != 0.0 || orRight != 0.0) ? 1.0 : 0.0
+                        );
                     break;
                 case "!":
                     break;
