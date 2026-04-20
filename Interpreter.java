@@ -249,16 +249,58 @@ public class Interpreter {
                         .setValue(greaterThan ? 1.0 : 0.0);
                     break;
                 case "+":
+                    double addLeft = resolveFloat(
+                        cmd.getOperands()[1],
+                        variables
+                    );
+                    double addRight = resolveFloat(
+                        cmd.getOperands()[2],
+                        variables
+                    );
+
                     // Sets the value in the hashmap
                     variables
                         .get(cmd.getOperands()[0])
-                        .setValue(greaterThan ? 1.0 : 0.0);
+                        .setValue(addLeft + addRight);
                     break;
                 case "-":
+                    double subLeft = resolveFloat(
+                        cmd.getOperands()[1],
+                        variables
+                    );
+                    double subRight = resolveFloat(
+                        cmd.getOperands()[2],
+                        variables
+                    );
+                    variables
+                        .get(cmd.getOperands()[0])
+                        .setValue(subLeft - subRight);
                     break;
                 case "*":
+                    double mulLeft = resolveFloat(
+                        cmd.getOperands()[1],
+                        variables
+                    );
+                    double mulRight = resolveFloat(
+                        cmd.getOperands()[2],
+                        variables
+                    );
+                    variables
+                        .get(cmd.getOperands()[0])
+                        .setValue(mulLeft * mulRight);
                     break;
                 case "/":
+                    double divLeft = resolveFloat(
+                        cmd.getOperands()[1],
+                        variables
+                    );
+                    double divRight = resolveFloat(
+                        cmd.getOperands()[2],
+                        variables
+                    );
+                    variables
+                        .get(cmd.getOperands()[0])
+                        .setValue(divLeft / divRight);
                     break;
                 case "%":
                     break;
