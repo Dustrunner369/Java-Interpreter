@@ -248,8 +248,7 @@ public class Interpreter {
                     );
                     boolean greaterThanOrEqualsToo;
 
-                    greaterThanOrEqualsToo = (gteLeftOperand >=
-                        gteRightOperand);
+                    greaterThanOrEqualsToo = (gteLeftOperand >= gteRightOperand);
 
                     variables
                         .get(cmd.getOperands()[0])
@@ -267,7 +266,7 @@ public class Interpreter {
                     );
                     boolean lessThan;
 
-                    lessThan = (ltLeftOperand >= ltRightOperand);
+                    lessThan = (ltLeftOperand < ltRightOperand);
 
                     variables
                         .get(cmd.getOperands()[0])
@@ -285,7 +284,7 @@ public class Interpreter {
                     );
                     boolean greaterThan;
 
-                    greaterThan = (gtLeftOperand >= gtRightOperand);
+                    greaterThan = (gtLeftOperand > gtRightOperand);
 
                     variables
                         .get(cmd.getOperands()[0])
